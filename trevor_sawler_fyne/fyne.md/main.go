@@ -38,7 +38,7 @@ func (app *config) createMenuItems(win fyne.Window) {
 	// parent menu which goes in the main menu, etc.
 	openMenuItem := fyne.NewMenuItem("Open...", app.openFunc(win)) // we could do inline functions or...
 
-	saveMenuItem := fyne.NewMenuItem("Save", func() {}) // ...create a func that returns a func
+	saveMenuItem := fyne.NewMenuItem("Save", app.saveFunc(win)) // ...create a func that returns a func
 
 	app.SaveMenuItem = saveMenuItem // this is so we can enable and disable from another item
 	app.SaveMenuItem.Disabled = true
@@ -86,6 +86,20 @@ func (app *config) saveAsFunc(win fyne.Window) func() {
 // creating a filter var at package level since we'll use in two funcs
 var filter = storage.NewExtensionFileFilter([]string{".md", ".MD"})
 
+func (app *config) saveFunc(win fyne.Window) func() {
+	return func() {
+		if app.CurrentFile != nil {
+			write, err := storage.Writer(app.CurrentFile)
+			if err != nil {
+				dialog.ShowError(err, win)
+			}
+
+			write.Write([]byte(app.EditWidget.Text))
+			defer write.Close()
+		}
+	}
+}
+
 func (app *config) openFunc(win fyne.Window) func() {
 	return func() {
 		openDialog := dialog.NewFileOpen(func(read fyne.URIReadCloser, err error) {
@@ -125,6 +139,7 @@ func main() {
 
 	// create a fyne app
 	a := app.New()
+	a.Settings().SetTheme(&myTheme{})
 
 	// create a window for the app
 	win := a.NewWindow("Markdown")
