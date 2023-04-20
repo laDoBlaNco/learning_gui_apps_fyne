@@ -9,9 +9,10 @@ import (
 )
 
 type Config struct {
-	App      fyne.App
-	Infolog  *log.Logger
-	ErrorLog *log.Logger
+	App        fyne.App
+	Infolog    *log.Logger
+	ErrorLog   *log.Logger
+	MainWindow fyne.Window
 }
 
 var myApp Config // to store our configuration
@@ -23,15 +24,20 @@ func main() {
 
 	// create our loggers
 	myApp.Infolog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
-	myApp.Infolog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	myApp.ErrorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	// open a connection to the database - sqlite to embed the dbase in the application
 
 	// create a database respository (simply pattern for interacting with things)
 
 	// create and size a fyne window
-	win := fyneApp.NewWindow("GoldWatcher")
+	myApp.MainWindow = fyneApp.NewWindow("GoldWatcher")
+	myApp.MainWindow.Resize(fyne.NewSize(300, 200))
+	myApp.MainWindow.SetFixedSize(true)
+	myApp.MainWindow.SetMaster()
+
+	myApp.makeUI()
 
 	// show and run the application
-	win.ShowAndRun()
+	myApp.MainWindow.ShowAndRun()
 }
