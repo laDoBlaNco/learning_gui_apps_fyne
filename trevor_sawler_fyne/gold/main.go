@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 
 	"fyne.io/fyne/v2"
@@ -9,10 +10,12 @@ import (
 )
 
 type Config struct {
-	App        fyne.App
-	Infolog    *log.Logger
-	ErrorLog   *log.Logger
-	MainWindow fyne.Window
+	App            fyne.App
+	Infolog        *log.Logger
+	ErrorLog       *log.Logger
+	MainWindow     fyne.Window
+	PriceContainer *fyne.Container
+	HTTPClient     *http.Client
 }
 
 var myApp Config // to store our configuration
@@ -21,6 +24,7 @@ func main() {
 	// create a fyne application
 	fyneApp := app.NewWithID("test.ladoblanco.ID.unique.preferences")
 	myApp.App = fyneApp
+	myApp.HTTPClient = &http.Client{}
 
 	// create our loggers
 	myApp.Infolog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -32,7 +36,7 @@ func main() {
 
 	// create and size a fyne window
 	myApp.MainWindow = fyneApp.NewWindow("GoldWatcher")
-	myApp.MainWindow.Resize(fyne.NewSize(300, 200))
+	myApp.MainWindow.Resize(fyne.NewSize(770, 410))
 	myApp.MainWindow.SetFixedSize(true)
 	myApp.MainWindow.SetMaster()
 
